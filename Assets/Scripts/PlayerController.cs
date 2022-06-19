@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    bool won = false;
+    bool gameOver = false;
     bool paused = false;
 
     public float speed;
     public Rigidbody2D rb;
-    public GameObject gameWon, pause;
+    public GameObject gameWon, gameLost, pause;
 
     // Start is called before the first frame update
     void Start()
@@ -20,7 +21,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (won)
+        if (gameOver)
             return;
 
         if (Input.GetKeyDown(KeyCode.Escape) && !paused)
@@ -30,8 +31,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Escape) && paused)
         {
-            pause.SetActive(false);
-            paused = false;
+            Resume();
         }
         else if(paused)
             return;
@@ -48,7 +48,23 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Door"))
         {
             gameWon.SetActive(true);
-            won = true;
+            gameOver = true;
         }
+        else if (collision.gameObject.CompareTag("Enemy"))
+        {
+            gameLost.SetActive(true);
+            gameOver = true;
+        }
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void Resume()
+    {
+        pause.SetActive(false);
+        paused = false;
     }
 }
