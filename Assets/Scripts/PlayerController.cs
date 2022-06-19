@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    bool won = false;
+    bool paused = false;
+
     public float speed;
     public Rigidbody2D rb;
+    public GameObject gameWon, pause;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +20,22 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (won)
+            return;
+
+        if (Input.GetKeyDown(KeyCode.Escape) && !paused)
+        {
+            pause.SetActive(true);
+            paused = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && paused)
+        {
+            pause.SetActive(false);
+            paused = false;
+        }
+        else if(paused)
+            return;
+
         float hInput = Input.GetAxis("Horizontal");
         float vInput = Input.GetAxis("Vertical");
 
@@ -25,6 +46,9 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Door"))
-            Debug.Log("Level complete");
+        {
+            gameWon.SetActive(true);
+            won = true;
+        }
     }
 }
